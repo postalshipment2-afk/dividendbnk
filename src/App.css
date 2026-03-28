@@ -1,0 +1,66 @@
+@reference "tailwindcss";
+
+/* App.css */
+
+/* Reset margins/padding for the app container */
+#root {
+  @apply min-h-screen bg-gray-50 text-gray-900;
+  font-family: "Inter", sans-serif;
+}
+
+/* Navbar styling helpers */
+.nav-link {
+  @apply text-gray-700 hover:text-blue-600 transition-colors duration-200;
+}
+
+.nav-link-active {
+  @apply text-blue-600 font-semibold;
+}
+
+/* Hero overlay reusable class */
+.hero-overlay {
+  background: linear-gradient(rgba(30, 58, 138, 0.7), rgba(37, 99, 235, 0.7));
+}
+
+/* Button variants */
+.btn-primary {
+  @apply px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition;
+}
+
+.btn-secondary {
+  @apply px-6 py-3 bg-white text-blue-600 rounded-lg hover:bg-gray-100 transition;
+}
+
+/* Carousel overrides */
+.carousel .slide {
+  @apply flex flex-col items-center justify-center;
+}
+
+.carousel .control-arrow {
+  @apply bg-blue-600 opacity-75 hover:opacity-100;
+}
+/* App.css */
+
+/* Root container */
+#root {
+  @apply min-h-screen bg-gray-50 text-gray-900;
+  font-family: "Inter", sans-serif;
+}
+
+/* Navbar links */
+.nav-link {
+  @apply text-gray-700 hover:text-blue-600 transition-colors duration-200;
+}
+
+.nav-link-active {
+  @apply text-blue-600 font-semibold;
+}
+
+/* Buttons */
+.btn-primary {
+  @apply px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition;
+}
+
+.btn-secondary {
+  @apply px-6 py-3 bg-white text-blue-600 rounded-lg hover:bg-gray-100 transition;
+}

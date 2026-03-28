@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+/* Optional global styles */
+html,
+body {
+  font-family: "Inter", sans-serif, "Times New Roman", serif;
+  background: fixed;
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: black;
+}
+
+/* Add this to your index.css */
+@keyframes shine {
+  100% {
+    left: 125%;
+  }
+}
