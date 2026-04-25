@@ -94,6 +94,12 @@ const Navbar = () => {
           >
             <Lock size={14} /> Client Login
           </Link>
+          <Link
+            to="/admin"
+            className="px-8 py-3 bg-red-600 text-white text-[11px] font-black uppercase tracking-widest rounded-xl hover:bg-blue-700 transition-all flex items-center gap-2"
+          >
+            <Lock size={14} /> Admin demo
+          </Link>
         </div>
 
         {/* MOBILE TOGGLE - Positioned on top of overlay when open */}
