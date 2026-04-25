@@ -3,6 +3,7 @@ import { Toaster } from "sonner";
 import Navbar from "./Components/Navigation";
 import Footer from "./Components/Footer";
 import useScrollToTop from "./hooks/useScrollToTop";
+import { Analytics } from "@vercel/analytics/react";
 
 import Home from "./Pages/Home";
 import About from "./Pages/Aboutus";
@@ -44,6 +45,7 @@ function App() {
         </main>
         <Footer />
       </ScrollToTopWrapper>
+      <Analytics />
     </Router>
   );
 }
