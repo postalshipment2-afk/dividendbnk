@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Toaster } from "sonner";
 import Navbar from "./Components/Navigation";
 import Footer from "./Components/Footer";
 import useScrollToTop from "./hooks/useScrollToTop";
@@ -22,6 +23,7 @@ function App() {
     <Router>
       {/* Scroll hook must be inside Router */}
       <ScrollToTopWrapper>
+        <Toaster />
         <Navbar />
         <main className="min-h-screen pt-20 md:pt-28">
           <Routes>

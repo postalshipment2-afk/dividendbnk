@@ -4,6 +4,7 @@ import { useState } from "react";
 import { supabase } from "../hooks/supabase"; // Import your singleton instance
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 import {
   ArrowLeft,
   KeyRound,
@@ -33,6 +34,7 @@ export default function ForgotPassword() {
       setError(error.message);
     } else {
       setSubmitted(true);
+      toast.success("Password reset email sent! Please check your inbox.");
     }
     setLoading(false);
   };

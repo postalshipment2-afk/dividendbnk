@@ -4,6 +4,7 @@ import React, { useState, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "../hooks/supabase";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 import {
   Landmark,
   Lock,
@@ -91,6 +92,9 @@ const SignupPage = () => {
       }
 
       setIsSuccess(true);
+      toast.success(
+        "Account created successfully! Please check your email for verification. Redirecting to login...",
+      );
       setTimeout(() => navigate("/Login"), 5000);
     } catch (err: any) {
       setError(err.message || "Registration failed.");

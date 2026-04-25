@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "../hooks/supabase";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 import {
   Landmark,
   Lock,
@@ -78,6 +79,7 @@ const LoginPage = () => {
         }
 
         // 4. SUCCESS: Only active users reach the dashboard
+        toast.success("Welcome back! Redirecting to your dashboard...");
         navigate("/Client");
       }
     } catch (err: any) {

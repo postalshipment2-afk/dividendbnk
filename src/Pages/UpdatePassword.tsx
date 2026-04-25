@@ -4,6 +4,7 @@ import { useState } from "react";
 import { supabase } from "../hooks/supabase";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 import {
   Eye,
   EyeOff,
@@ -49,6 +50,7 @@ export default function UpdatePassword() {
       setLoading(false);
     } else {
       setSuccess(true);
+      toast.success("Password updated successfully! Redirecting to login...");
       setTimeout(() => navigate("/login"), 3000);
     }
   };

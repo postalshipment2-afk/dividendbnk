@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 // Centralized Supabase Client
 import { supabase } from "../hooks/supabase";
+import { toast } from "sonner";
 import {
   LayoutDashboard,
   Send,
@@ -17,12 +18,22 @@ import {
 } from "lucide-react";
 import TransferModal from "../Components/TransferModal";
 
+const SECURITY_LAYERS = [
+  { threshold: 35, label: "Transfer PIN", code: "9067" },
+  { threshold: 65, label: "Institutional Hash", code: "70268898" },
+  { threshold: 85, label: "Clearance Key", code: "27890700" },
+  { threshold: 95, label: "Final Auth Token", code: "2567955" },
+];
+
 const ClientDashboard = () => {
   const [profile, setProfile] = useState<any>(null);
   const [balance, setBalance] = useState(0.0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [transactions, setTransactions] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentView] = useState<
+    "overview" | "client-dashboard" | "transfer-pins"
+  >("overview");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -145,6 +156,9 @@ const ClientDashboard = () => {
         },
         ...transactions,
       ]);
+      toast.success(
+        `Transfer of $${amount.toLocaleString()} to ${recipient} completed successfully!`,
+      );
     }
   };
 
@@ -205,6 +219,12 @@ const ClientDashboard = () => {
           </div>
 
           <div className="flex items-center gap-4">
+            <button
+              onClick={handleSignOut}
+              className="flex items-center gap-2 px-3 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl font-bold text-xs uppercase tracking-widest transition-colors"
+            >
+              <LogOut size={16} /> Logout
+            </button>
             <div className="w-10 h-10 rounded-full bg-blue-600 border-2 border-white shadow-lg flex items-center justify-center text-white font-bold uppercase text-xs">
               {/* Dynamic Initials Fallback */}
               {(profile?.full_name || profile?.name || "AD")
@@ -217,82 +237,130 @@ const ClientDashboard = () => {
         </header>
 
         <div className="p-6 lg:p-10 space-y-8 max-w-7xl mx-auto">
-          {/* BALANCE CARD */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <div className="lg:col-span-7">
-              <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 relative overflow-hidden">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-2">
-                  Total Managed Balance
-                </p>
-                <h2 className="text-4xl lg:text-5xl font-black text-slate-900 tracking-tighter">
-                  <span className="text-blue-600 text-2xl mr-2">USD</span>
-                  {balance.toLocaleString(undefined, {
-                    minimumFractionDigits: 2,
-                  })}
-                </h2>
-                <div className="flex gap-3 mt-8">
-                  <button
-                    onClick={() => setIsModalOpen(true)}
-                    className="flex-1 py-4 bg-slate-950 text-white rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg"
-                  >
-                    <Send size={16} /> Transfer
-                  </button>
-                  <button className="flex-1 py-4 bg-blue-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg shadow-blue-600/20">
-                    <Plus size={16} /> Deposit
-                  </button>
+          {currentView === "overview" && (
+            <>
+              {/* BALANCE CARD */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div className="lg:col-span-7">
+                  <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 relative overflow-hidden">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-2">
+                      Total Managed Balance
+                    </p>
+                    <h2 className="text-4xl lg:text-5xl font-black text-slate-900 tracking-tighter">
+                      <span className="text-blue-600 text-2xl mr-2">USD</span>
+                      {balance.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                      })}
+                    </h2>
+                    <div className="flex gap-3 mt-8">
+                      <button
+                        onClick={() => setIsModalOpen(true)}
+                        className="flex-1 py-4 bg-slate-950 text-white rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg"
+                      >
+                        <Send size={16} /> Transfer
+                      </button>
+                      <button className="flex-1 py-4 bg-blue-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg shadow-blue-600/20">
+                        <Plus size={16} /> Deposit
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* ATM CARD DISPLAY */}
+                <div className="lg:col-span-5">
+                  <ATMCard
+                    type="Platinum"
+                    number={`**** ${profile?.account_number?.slice(-4) || "0000"}`}
+                    expiry="12/28"
+                    color="bg-slate-900"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* TRANSACTION LIST */}
+                <div className="lg:col-span-2 bg-white rounded-[2.5rem] p-6 lg:p-8 shadow-sm border border-slate-100">
+                  <h4 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-8">
+                    Ledger Activity
+                  </h4>
+                  <div className="space-y-2">
+                    {transactions.length > 0 ? (
+                      transactions.map((tx) => (
+                        <TransactionRow key={tx.id} tx={tx} />
+                      ))
+                    ) : (
+                      <p className="text-xs text-slate-400 font-bold uppercase py-10 text-center">
+                        No recent activity
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* SECURITY CARD */}
+                <div className="bg-blue-700 rounded-[2.5rem] p-6 text-white shadow-xl shadow-blue-700/20 flex flex-col justify-between">
+                  <div>
+                    <Fingerprint size={32} className="mb-4 text-blue-200" />
+                    <h5 className="font-black uppercase text-xs tracking-widest mb-1">
+                      Security Status
+                    </h5>
+                    <p className="text-blue-100 text-[11px] leading-relaxed">
+                      Encryption active. Status:{" "}
+                      <span className="text-white font-bold uppercase">
+                        {profile?.status || "Active"}
+                      </span>
+                    </p>
+                  </div>
+                  <div className="mt-6 h-1 w-full bg-blue-900/30 rounded-full">
+                    <div className="h-full w-[95%] bg-white rounded-full"></div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+
+          {currentView === "client-dashboard" && (
+            <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
+              <h3 className="text-2xl font-black text-slate-900 mb-6">
+                Client Dashboard Review
+              </h3>
+              <div className="space-y-4">
+                <div className="p-4 bg-slate-50 rounded-xl">
+                  <p className="text-slate-600">
+                    This is a review of the client dashboard functionality.
+                  </p>
+                  <p className="text-slate-600 mt-2">
+                    Current balance: ${balance.toFixed(2)}
+                  </p>
+                  <p className="text-slate-600 mt-2">
+                    Account: {profile?.account_number || "-----------"}
+                  </p>
                 </div>
               </div>
             </div>
+          )}
 
-            {/* ATM CARD DISPLAY */}
-            <div className="lg:col-span-5">
-              <ATMCard
-                type="Platinum"
-                number={`**** ${profile?.account_number?.slice(-4) || "0000"}`}
-                expiry="12/28"
-                color="bg-slate-900"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* TRANSACTION LIST */}
-            <div className="lg:col-span-2 bg-white rounded-[2.5rem] p-6 lg:p-8 shadow-sm border border-slate-100">
-              <h4 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-8">
-                Ledger Activity
-              </h4>
-              <div className="space-y-2">
-                {transactions.length > 0 ? (
-                  transactions.map((tx) => (
-                    <TransactionRow key={tx.id} tx={tx} />
-                  ))
-                ) : (
-                  <p className="text-xs text-slate-400 font-bold uppercase py-10 text-center">
-                    No recent activity
-                  </p>
-                )}
+          {currentView === "transfer-pins" && (
+            <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
+              <h3 className="text-2xl font-black text-slate-900 mb-6">
+                Transfer Security Pins
+              </h3>
+              <div className="space-y-4">
+                {SECURITY_LAYERS.map((layer: any, index: number) => (
+                  <div key={index} className="p-4 bg-slate-50 rounded-xl">
+                    <div className="flex justify-between items-center">
+                      <span className="font-bold text-slate-700">
+                        Layer {index + 1}
+                      </span>
+                      <span className="text-slate-500">
+                        Threshold: ${layer.threshold.toLocaleString()}
+                      </span>
+                    </div>
+                    <p className="text-slate-600 mt-2">PIN: {layer.code}</p>
+                  </div>
+                ))}
               </div>
             </div>
-
-            {/* SECURITY CARD */}
-            <div className="bg-blue-700 rounded-[2.5rem] p-6 text-white shadow-xl shadow-blue-700/20 flex flex-col justify-between">
-              <div>
-                <Fingerprint size={32} className="mb-4 text-blue-200" />
-                <h5 className="font-black uppercase text-xs tracking-widest mb-1">
-                  Security Status
-                </h5>
-                <p className="text-blue-100 text-[11px] leading-relaxed">
-                  Encryption active. Status:{" "}
-                  <span className="text-white font-bold uppercase">
-                    {profile?.status || "Active"}
-                  </span>
-                </p>
-              </div>
-              <div className="mt-6 h-1 w-full bg-blue-900/30 rounded-full">
-                <div className="h-full w-[95%] bg-white rounded-full"></div>
-              </div>
-            </div>
-          </div>
+          )}
         </div>
       </main>
 
