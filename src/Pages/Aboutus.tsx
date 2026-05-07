@@ -76,7 +76,7 @@ export default function AboutUs() {
       <section className="py-32 bg-slate-50 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-6">
           <SectionHeading
-            subtitle="The Doksanlar Story"
+            subtitle="The Nexus-Finance & Savings Story"
             title="Thirty Years of Stability and Evolution"
           />
 
@@ -266,7 +266,7 @@ export default function AboutUs() {
               <h2 className="text-5xl md:text-7xl font-black text-white leading-[1.1] tracking-tighter mb-8 max-w-4xl mx-auto">
                 Secure your legacy with <br />
                 <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 via-indigo-200 to-white">
-                  Doksanlar Bank.
+                  Nexus-Finance & Savings.
                 </span>
               </h2>
 

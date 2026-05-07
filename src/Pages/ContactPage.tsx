@@ -85,9 +85,12 @@ const ContactPage = () => {
                   <h4 className="font-black text-slate-900 text-sm uppercase">
                     24/7 Priority Line
                   </h4>
-                  <p className="text-slate-500 text-sm mt-1">
-                    +1 (800) Nexus-Finance-VIP
-                  </p>
+                  <a
+                    href="tel:+14132170381"
+                    className="text-slate-500 text-sm mt-1 hover:text-blue-600 transition-colors block"
+                  >
+                    +1 (413) 217-0381
+                  </a>
                 </div>
               </div>
 
@@ -99,9 +102,12 @@ const ContactPage = () => {
                   <h4 className="font-black text-slate-900 text-sm uppercase">
                     Secure Email
                   </h4>
-                  <p className="text-slate-500 text-sm mt-1">
-                    private@nexus-finance.com
-                  </p>
+                  <a
+                    href="mailto:support@nexussaving.com"
+                    className="text-slate-500 text-sm mt-1 hover:text-blue-600 transition-colors block"
+                  >
+                    support@nexussaving.com
+                  </a>
                 </div>
               </div>
 
@@ -125,7 +131,7 @@ const ContactPage = () => {
                 </div>
                 <div>
                   <h4 className="font-black text-slate-900 text-sm uppercase">
-                    Encrypted Chat
+                    Encrypted Email Chat
                   </h4>
                   <p className="text-slate-500 text-sm mt-1">
                     Available via Portal

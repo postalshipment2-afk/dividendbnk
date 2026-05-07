@@ -156,7 +156,7 @@ export default function Services() {
           <img
             src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069"
             className="w-full h-full object-cover"
-            alt="Doksanlar Interior"
+            alt="Nexus-Finance Interior"
           />
           <div className="absolute inset-0 bg-linear-to-r from-slate-950 via-slate-950/90 to-transparent" />
         </div>
@@ -183,9 +183,9 @@ export default function Services() {
             </h1>
 
             <p className="text-lg md:text-xl text-slate-400 mb-12 leading-relaxed max-w-2xl font-medium">
-              Doksanlar Bank provides the infrastructure for your global
-              lifestyle. Our card suites are engineered for resilience, speed,
-              and absolute security.
+              Nexus-Finance & Savings provides the infrastructure for your
+              global lifestyle. Our card suites are engineered for resilience,
+              speed, and absolute security.
             </p>
 
             <div className="flex flex-wrap gap-5">
@@ -360,8 +360,8 @@ export default function Services() {
                 </span>
               </h2>
               <p className="text-blue-100/70 max-w-xl mx-auto mb-14 text-lg font-medium leading-relaxed">
-                Join the global elite who rely on Doksanlar Bank for
-                cross-border capital management and asset protection.
+                Join the global elite who rely on Nexus-Finance for cross-border
+                capital management and asset protection.
               </p>
               <Link
                 to="/contact"

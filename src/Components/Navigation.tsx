@@ -92,7 +92,7 @@ const Navbar = () => {
             to="/login"
             className="px-8 py-3 bg-slate-950 text-white text-[11px] font-black uppercase tracking-widest rounded-xl hover:bg-blue-700 transition-all flex items-center gap-2"
           >
-            <Lock size={14} /> Client Login
+            <Lock size={14} /> Account Login
           </Link>
           {/* <Link
             to="/admin"
