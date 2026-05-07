@@ -118,7 +118,7 @@ const SignupPage = () => {
           <Link to="/" className="flex items-center gap-3 pt-15">
             <Landmark className="text-blue-500 w-12 h-12" />
             <span className="text-3xl font-black text-white tracking-tighter uppercase">
-              DOKSANLAR BANK
+              Nexus-Finance
             </span>
           </Link>
 
@@ -133,7 +133,7 @@ const SignupPage = () => {
             </h2>
             <p className="text-slate-400 text-xl max-w-md leading-relaxed">
               Experience the pinnacle of institutional private banking. Secure
-              your legacy with Doksanlar global assets.
+              your legacy with Nexus-Finance global assets.
             </p>
           </motion.div>
           <div className="h-1.5 w-24 bg-blue-600 rounded-full"></div>
@@ -458,7 +458,7 @@ const SignupPage = () => {
           )}
         </motion.div>
         <p className="mt-12 text-[10px] font-bold text-slate-300 uppercase tracking-[0.5em]">
-          Doksanlar Bank Institutional Portal v4.2
+          Nexus-Finance Institutional Portal v4.2
         </p>
       </section>
     </main>

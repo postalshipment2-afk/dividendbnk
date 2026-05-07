@@ -400,7 +400,7 @@ const ATMCard = ({ type, number, expiry, color }: any) => (
           {type}
         </span>
         <span className="text-lg font-bold italic tracking-tighter">
-          Doksanlar
+          Nexus-Finance
         </span>
       </div>
       <div className="w-10 h-8 bg-amber-400/20 rounded-md border border-amber-400/30"></div>

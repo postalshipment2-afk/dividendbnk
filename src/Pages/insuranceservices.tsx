@@ -184,7 +184,7 @@ export default function InsurancePage() {
           <div className="lg:col-span-1">
             <ShieldAlert size={56} className="text-blue-500 mb-8" />
             <h2 className="text-5xl font-black text-white tracking-tighter mb-6 italic">
-              The Doksanlar <br /> Guarantee.
+              The Nexus-Finance <br /> Guarantee.
             </h2>
             <p className="text-slate-400 font-medium text-lg leading-relaxed">
               When crisis strikes, our Rapid Response claims desk activates

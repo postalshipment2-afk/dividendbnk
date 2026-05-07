@@ -102,7 +102,7 @@ const LoginPage = () => {
           <Link to="/" className="flex items-center gap-3 group pt-18">
             <Landmark className="text-blue-500 w-10 h-10 group-hover:rotate-12 transition-transform" />
             <span className="text-2xl xl:text-3xl font-black text-white tracking-tighter uppercase ">
-              DOKSANLAR BANK
+              Nexus-Finance{" "}
             </span>
           </Link>
 
@@ -132,7 +132,7 @@ const LoginPage = () => {
           <div className="flex lg:hidden items-center justify-center gap-2 mb-8">
             <Landmark className="text-blue-600 w-8 h-8" />
             <span className="text-xl font-black text-slate-900 tracking-tighter uppercase">
-              DOKSANLAR BANK
+              Nexus-Finance
             </span>
           </div>
 
@@ -241,7 +241,7 @@ const LoginPage = () => {
 
               <div className="h-px w-full bg-slate-100 relative">
                 <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-3 text-[9px] font-black text-slate-300 uppercase tracking-widest whitespace-nowrap">
-                  New to Doksanlar?
+                  New to Nexus-Finance?
                 </span>
               </div>
 

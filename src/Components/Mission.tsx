@@ -47,7 +47,7 @@ const Mission = () => {
                 title="Over 30 Years of Banking Excellence"
               />
               <p className="text-slate-600 mb-8 leading-relaxed text-lg">
-                Since 1990, Doksanlar Bank has been a cornerstone of financial
+                Since 1990, Nexus-Finance has been a cornerstone of financial
                 stability. We've navigated market cycles with a focus on
                 conservative risk management and aggressive technological
                 growth.

@@ -18,6 +18,7 @@ import Forgotpassword from "./Pages/Forgotpassword";
 import UpdatePassword from "./Pages/UpdatePassword";
 import WealthManagement from "./Pages/wealthmanagement";
 import InsuranceServices from "./Pages/insuranceservices";
+import AdminLoginPage from "./Pages/AdminLoginPage";
 
 function App() {
   return (
@@ -41,6 +42,15 @@ function App() {
             <Route path="/update-password" element={<UpdatePassword />} />
             <Route path="/wealth-management" element={<WealthManagement />} />
             <Route path="/insurance-services" element={<InsuranceServices />} />
+            <Route
+              path="*"
+              element={
+                <h1 className="text-center text-3xl mt-20">
+                  404 - Page Not Found
+                </h1>
+              }
+            />
+            <Route path="/admin-login" element={<AdminLoginPage />} />
           </Routes>
         </main>
         <Footer />

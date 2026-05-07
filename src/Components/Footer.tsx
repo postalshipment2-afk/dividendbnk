@@ -13,6 +13,7 @@ import {
   FaInstagram,
   FaFacebookF,
 } from "react-icons/fa";
+import { MapPin, Phone, Mail } from "lucide-react";
 
 const Footer = () => (
   <footer className="bg-slate-900 text-white py-16">
@@ -29,8 +30,9 @@ const Footer = () => (
         <div className="max-w-xs">
           {/* CRYSTAL GRADIENT LOGO: Metallic effect */}
           <h3 className="text-3xl font-black mb-6 tracking-tighter italic bg-linear-to-tr from-white via-blue-400 to-white bg-clip-text text-transparent drop-shadow-sm">
-            Doksanlar{" "}
-            <span className="text-blue-600 not-italic font-light">Bank</span>
+            Nexus-{" "}
+            <span className="text-blue-600 not-italic font-light">Finance</span>
+            {/* <span className="text-blue-600 not-italic font-light">Bank</span> */}
           </h3>
 
           <p className="text-slate-400 text-sm leading-relaxed mb-8 font-medium">
@@ -159,15 +161,39 @@ const Footer = () => (
 
         {/* Contact */}
         <div>
-          <h4 className="font-bold mb-4">Contact Us</h4>
-          <address className="not-italic text-slate-400">
-            123 Financial District
-            <br />
-            New York, NY 10001
-            <br />
-            Phone: (555) 123-4567
-            <br />
-            Email: info@doksanlarbank.com
+          <h4 className="font-bold mb-4 text-white">Contact Us</h4>
+          <address className="not-italic text-slate-400 space-y-3">
+            {/* Address */}
+            <div className="flex items-start gap-3">
+              <MapPin className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
+              <span>
+                123 Financial District
+                <br />
+                New York, NY 10001
+              </span>
+            </div>
+
+            {/* Phone */}
+            <div className="flex items-center gap-3">
+              <Phone className="w-5 h-5 text-blue-500 shrink-0" />
+              <a
+                href="tel:5551234567"
+                className="hover:text-white transition-colors"
+              >
+                +1 (413) 217-0381
+              </a>
+            </div>
+
+            {/* Email */}
+            <div className="flex items-center gap-3">
+              <Mail className="w-5 h-5 text-blue-500 shrink-0" />
+              <a
+                href="mailto:support@nexussaving.com"
+                className="hover:text-white transition-colors"
+              >
+                support@nexussaving.com
+              </a>
+            </div>
           </address>
         </div>
       </div>
@@ -175,8 +201,7 @@ const Footer = () => (
       {/* Copyright */}
       <div className="border-t border-slate-600 mt-12 pt-8 text-center text-slate-400">
         <p>
-          &copy; {new Date().getFullYear()} Doksanlar Bank. All rights reserved
-          by Mr Smith design.
+          &copy; {new Date().getFullYear()} Nexus-Finance. All rights reserved
         </p>
       </div>
     </div>

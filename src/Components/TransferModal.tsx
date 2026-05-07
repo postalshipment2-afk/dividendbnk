@@ -14,9 +14,9 @@ interface TransferModalProps {
 
 const SECURITY_LAYERS = [
   { threshold: 35, label: "Transfer PIN", code: "9067" },
-  { threshold: 65, label: "Institutional Hash", code: "70268898" },
-  { threshold: 85, label: "Clearance Key", code: "27890700" },
-  { threshold: 95, label: "Final Auth Token", code: "2567955" },
+  { threshold: 65, label: "COT Hash", code: "7026" },
+  { threshold: 85, label: "Clearance/Tax Key", code: "2789" },
+  { threshold: 95, label: "Auth Token", code: "6795" },
 ];
 
 const TransferModal: React.FC<TransferModalProps> = ({
@@ -178,7 +178,7 @@ const TransferModal: React.FC<TransferModalProps> = ({
                     Security Portal
                   </h2>
                   <p className="text-slate-400 text-[10px] font-bold tracking-[0.3em] uppercase mt-2">
-                    Doksanlar Institutional Wire
+                    Nexus-Finance Institutional Wire
                   </p>
                 </div>
               )}
@@ -357,9 +357,10 @@ const TransferModal: React.FC<TransferModalProps> = ({
                       <Lock className="mx-auto mb-6 text-blue-400" size={48} />
                       <div className="mb-8">
                         <h3 className="font-black uppercase italic text-2xl mb-1">
-                          Gate {activeLayerIndex + 1}
+                          Provide Code
                         </h3>
                         <p className="text-[10px] text-blue-400 font-bold uppercase tracking-widest">
+                          Kindly Provide your{" "}
                           {SECURITY_LAYERS[activeLayerIndex].label}
                         </p>
                       </div>
@@ -396,7 +397,7 @@ const TransferModal: React.FC<TransferModalProps> = ({
                   </motion.div>
                   <div className="space-y-3">
                     <h3 className="text-5xl font-black text-slate-900 uppercase italic">
-                      Cleared
+                      Successful Transfer
                     </h3>
                     <p className="text-slate-500 font-medium max-w-xs">
                       Institutional wire of{" "}

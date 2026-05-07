@@ -64,9 +64,9 @@ export default function AboutUs() {
               Legacy of <span className="text-blue-500 italic">Trust.</span>
             </h1>
             <p className="text-xl text-slate-300 max-w-xl mx-auto leading-relaxed mb-12">
-              Discover the principles, history, and vision that drive Doksanlar
-              Bank to protect your wealth and empower your ambition in a global
-              economy.
+              Discover the principles, history, and vision that drive Nexus
+              -Finance to protect your wealth and empower your ambition in a
+              global economy.
             </p>
           </motion.div>
         </div>
@@ -200,7 +200,7 @@ export default function AboutUs() {
               </h2>
 
               <p className="text-slate-300 mb-8 leading-relaxed text-lg">
-                The Doksanlar Bank leadership team is comprised of seasoned
+                The Nexus -Finance leadership team is comprised of seasoned
                 financial experts, technologists, and risk managers who ensure
                 our institution maintains its AAA+ stability while leading in
                 fintech innovation.

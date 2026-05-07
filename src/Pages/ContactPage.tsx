@@ -86,7 +86,7 @@ const ContactPage = () => {
                     24/7 Priority Line
                   </h4>
                   <p className="text-slate-500 text-sm mt-1">
-                    +1 (800) DOKSAN-VIP
+                    +1 (800) Nexus-Finance-VIP
                   </p>
                 </div>
               </div>
@@ -100,7 +100,7 @@ const ContactPage = () => {
                     Secure Email
                   </h4>
                   <p className="text-slate-500 text-sm mt-1">
-                    private@doksanlar.com
+                    private@nexus-finance.com
                   </p>
                 </div>
               </div>

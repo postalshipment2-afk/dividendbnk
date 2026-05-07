@@ -54,12 +54,12 @@ const Navbar = () => {
             <span className="relative text-xl md:text-3xl font-black tracking-tighter uppercase italic transition-all duration-500">
               {/* PRIMARY GRADIENT LAYER: Polished Silver to Deep Navy */}
               <span className="bg-linear-to-b from-slate-900 via-slate-800 to-slate-950 bg-clip-text text-transparent drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]">
-                Doksanlar
+                Nexus
               </span>
 
               {/* SECONDARY GRADIENT LAYER: Electric Blue Sapphire */}
               <span className="bg-linear-to-tr from-blue-600 via-blue-400 to-blue-800 bg-clip-text text-transparent ml-1 drop-shadow-[0_2px_8px_rgba(37,99,235,0.3)]">
-                Bank
+                finance
               </span>
 
               {/* UNDER-GLOW EFFECT: Appears on hover for "Active" banking feel */}
@@ -94,12 +94,12 @@ const Navbar = () => {
           >
             <Lock size={14} /> Client Login
           </Link>
-          <Link
+          {/* <Link
             to="/admin"
             className="px-8 py-3 bg-red-600 text-white text-[11px] font-black uppercase tracking-widest rounded-xl hover:bg-blue-700 transition-all flex items-center gap-2"
           >
             <Lock size={14} /> Admin demo
-          </Link>
+          </Link> */}
         </div>
 
         {/* MOBILE TOGGLE - Positioned on top of overlay when open */}
@@ -172,7 +172,7 @@ const Navbar = () => {
                   <div className="flex items-center gap-4 text-slate-500">
                     <Phone size={18} className="text-blue-600" />
                     <span className="text-sm font-bold">
-                      +1 (800) DOKSAN-VIP
+                      +1 (800) NEXUS FINANCE - VIP
                     </span>
                   </div>
                   <div className="flex items-center gap-4 text-slate-500">
