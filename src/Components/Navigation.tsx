@@ -195,12 +195,12 @@ const Navbar = () => {
                     <ShieldCheck size={18} />
                     Login Access
                   </Link>
-                  <Link
+                  {/* <Link
                     to="/admin"
                     className="px-8 py-3 bg-red-600 text-white text-[11px] font-black uppercase tracking-widest rounded-xl hover:bg-blue-700 transition-all flex items-center gap-2"
                   >
                     <Lock size={14} /> Admin demo
-                  </Link>
+                  </Link> */}
                 </div>
                 <p className="text-[9px] text-center text-slate-400 font-bold uppercase tracking-widest mt-6">
                   Regulated by the Financial Authority
