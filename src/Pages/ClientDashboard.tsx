@@ -268,11 +268,28 @@ const ClientDashboard = () => {
 
                 {/* ATM CARD DISPLAY */}
                 <div className="lg:col-span-5">
+                  {/* Platinum Card: Sleek, dark, and metallic */}
                   <ATMCard
                     type="Platinum"
                     number={`**** ${profile?.account_number?.slice(-4) || "0000"}`}
-                    expiry="12/28"
-                    color="bg-slate-900"
+                    expiry="12/29"
+                    color="bg-gradient-to-br from-slate-800 via-slate-900 to-black border border-slate-700 shadow-2xl"
+                  />
+
+                  {/* Gold Card: Warm, shimmering, and high-contrast */}
+                  <ATMCard
+                    type="Gold"
+                    number={`**** ${profile?.account_number?.slice(-4) || "0000"}`}
+                    expiry="12/29"
+                    color="bg-gradient-to-br from-yellow-300 via-yellow-500 to-amber-600 text-black mt-6 shadow-xl"
+                  />
+
+                  {/* Standard Card: Modern, clean, and professional */}
+                  <ATMCard
+                    type="Standard"
+                    number={`**** ${profile?.account_number?.slice(-4) || "0000"}`}
+                    expiry="12/29"
+                    color="bg-gradient-to-br from-blue-600 to-indigo-800 mt-6 shadow-lg"
                   />
                 </div>
               </div>
