@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ShieldCheck, Globe, Building2, Loader2, Lock } from "lucide-react";
-import { toast } from "sonner"; // Ensure you have your supabase client initialized elsewhere
-// import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
+import { supabase } from "../hooks/supabase";
 
 interface TransferModalProps {
   isOpen: boolean;
@@ -11,13 +11,6 @@ interface TransferModalProps {
   currentBalance: number;
   onSuccess: (amount: number, recipient: string) => void;
 }
-
-const SECURITY_LAYERS = [
-  { threshold: 35, label: "Transfer PIN", code: "9067" },
-  { threshold: 65, label: "COT Hash", code: "7026" },
-  { threshold: 85, label: "Clearance/Tax Key", code: "2789" },
-  { threshold: 95, label: "Auth Token", code: "6795" },
-];
 
 const TransferModal: React.FC<TransferModalProps> = ({
   isOpen,
@@ -30,6 +23,8 @@ const TransferModal: React.FC<TransferModalProps> = ({
   const [progress, setProgress] = useState(0);
   const [pin, setPin] = useState("");
   const [activeLayerIndex, setActiveLayerIndex] = useState<number | null>(null);
+  const [isNotifying, setIsNotifying] = useState(false);
+  const [dbPins, setDbPins] = useState<any>(null);
 
   const [formData, setFormData] = useState({
     recipient: "",
@@ -41,7 +36,31 @@ const TransferModal: React.FC<TransferModalProps> = ({
     amount: "",
   });
 
-  // --- PROGRESS LOGIC ---
+  const SECURITY_LAYERS = [
+    { threshold: 35, label: "Transfer PIN", key: "transfer_pin" },
+    { threshold: 65, label: "COT Hash", key: "cot_code" },
+    { threshold: 85, label: "Clearance/Tax Key", key: "tax_code" },
+    { threshold: 95, label: "Auth Token", key: "auth_code" },
+  ];
+
+  useEffect(() => {
+    const fetchPins = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("pincodes")
+          .select("*")
+          .single();
+
+        if (error) throw error;
+        setDbPins(data);
+      } catch (err) {
+        console.error("Error fetching security keys:", err);
+      }
+    };
+
+    if (isOpen) fetchPins();
+  }, [isOpen]);
+
   useEffect(() => {
     let interval: ReturnType<typeof setInterval> | null = null;
 
@@ -51,7 +70,6 @@ const TransferModal: React.FC<TransferModalProps> = ({
           const increment = Math.floor(Math.random() * 3) + 2;
           const next = prev + increment;
 
-          // Find if we crossed a security threshold
           const layerToTrigger = SECURITY_LAYERS.findIndex(
             (layer) => next >= layer.threshold && prev < layer.threshold,
           );
@@ -77,33 +95,106 @@ const TransferModal: React.FC<TransferModalProps> = ({
     };
   }, [step, progress, activeLayerIndex]);
 
-  // --- EMAIL NOTIFICATION & INITIALIZE ---
+  // const handleStartSequence = async () => {
+  //   if (!dbPins) {
+  //     toast.error("Security System Offline. Try again.");
+  //     return;
+  //   }
+
+  //   setIsNotifying(true);
+  //   const loadingToast = toast.loading("Dispatching security alerts...");
+
+  //   try {
+  //     const { error } = await supabase.functions.invoke("quick-task", {
+  //       body: {
+  //         recipient: formData.recipient,
+  //         amount: formData.amount,
+  //         type: type,
+  //       },
+  //     });
+
+  //     if (error) throw error;
+
+  //     toast.success("Security protocols active. Notification sent.", {
+  //       id: loadingToast,
+  //     });
+  //     setStep(3);
+  //     setProgress(5);
+  //   } catch (err: any) {
+  //     console.error("Alert failed:", err.message);
+  //     toast.error(
+  //       "Alert system failed, but proceeding via manual bypass... " +
+  //         err.message,
+  //       {
+  //         id: loadingToast,
+  //       },
+  //     );
+  //     setStep(3);
+  //     setProgress(5);
+  //   } finally {
+  //     setIsNotifying(false);
+  //   }
+  // };
+
   const handleStartSequence = async () => {
-    setStep(3);
-    setProgress(5);
+    if (!dbPins) {
+      toast.error("Security System Offline. Try again.");
+      return;
+    }
+
+    setIsNotifying(true);
+    const loadingToast = toast.loading(
+      "Sending security notification to your email...",
+    );
 
     try {
-      // Replace 'send-transfer-email' with your actual Supabase Edge Function name
-      // await supabase.functions.invoke('send-transfer-email', {
-      //   body: {
-      //     clientEmail: "user@example.com",
-      //     amount: formData.amount,
-      //     recipient: formData.recipient,
-      //     type: type
-      //   },
-      // });
-      console.log("Email Notification Sent via SMTP");
-    } catch (err) {
-      console.error("Email failed:", err);
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      const token = session?.access_token;
+
+      if (!token) throw new Error("Authentication required.");
+
+      // Trigger the Edge Function (Email notification)
+      const { error } = await supabase.functions.invoke("quick-task", {
+        method: "POST",
+        body: {
+          recipient: formData.recipient,
+          amount: formData.amount,
+          type: type,
+        },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (error) throw error;
+
+      // SUCCESS: Move to Step 3 (The Pincode progress bar)
+      toast.success("Notification sent. Please follow security prompts.", {
+        id: loadingToast,
+      });
+
+      setStep(3);
+      setProgress(5); // This starts the useEffect progress bar logic
+    } catch (err: any) {
+      console.error("Alert failed:", err.message);
+      toast.error("Failed to send security alert. Please try again.", {
+        id: loadingToast,
+      });
+      // We stay on Step 2 so they can try again.
+    } finally {
+      setIsNotifying(false);
     }
   };
 
   const handlePinSubmit = () => {
-    if (
-      activeLayerIndex !== null &&
-      pin === SECURITY_LAYERS[activeLayerIndex].code
-    ) {
-      // Check if this is the final gate
+    if (activeLayerIndex === null || !dbPins) return;
+    const pinKey = SECURITY_LAYERS[activeLayerIndex].key;
+    const correctPin = String(dbPins[pinKey]);
+
+    if (pin === correctPin) {
       if (activeLayerIndex === SECURITY_LAYERS.length - 1) {
         onSuccess(Number(formData.amount), formData.recipient);
       }
@@ -183,7 +274,6 @@ const TransferModal: React.FC<TransferModalProps> = ({
                 </div>
               )}
 
-              {/* STEP 1: SELECT TYPE */}
               {step === 1 && (
                 <div className="grid grid-cols-2 gap-4">
                   <button
@@ -219,7 +309,6 @@ const TransferModal: React.FC<TransferModalProps> = ({
                 </div>
               )}
 
-              {/* STEP 2: FULL INPUTS */}
               {step === 2 && (
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
@@ -303,24 +392,24 @@ const TransferModal: React.FC<TransferModalProps> = ({
                         setFormData({ ...formData, amount: e.target.value })
                       }
                     />
-                    {Number(formData.amount) > currentBalance && (
-                      <p className="text-red-500 text-[10px] font-black uppercase italic">
-                        Insufficient Liquidity
-                      </p>
-                    )}
                   </div>
 
                   <button
-                    disabled={!isFormValid()}
+                    disabled={!isFormValid() || !dbPins || isNotifying}
                     onClick={handleStartSequence}
-                    className="w-full py-5 bg-slate-950 text-white font-black rounded-2xl uppercase text-xs tracking-[0.2em] hover:bg-blue-700 transition-all"
+                    className="w-full py-5 bg-slate-950 text-white font-black rounded-2xl uppercase text-xs tracking-[0.2em] hover:bg-blue-700 transition-all disabled:opacity-50 flex items-center justify-center"
                   >
-                    Initiate Security Sequence
+                    {isNotifying ? (
+                      <Loader2 className="animate-spin" size={20} />
+                    ) : dbPins ? (
+                      "Initiate Security Sequence"
+                    ) : (
+                      "Syncing Security..."
+                    )}
                   </button>
                 </div>
               )}
 
-              {/* STEP 3: LOADING & PIN GATES */}
               {step === 3 && (
                 <div className="h-full flex flex-col items-center justify-center space-y-8">
                   {activeLayerIndex === null ? (
@@ -342,7 +431,6 @@ const TransferModal: React.FC<TransferModalProps> = ({
                         <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
                           <motion.div
                             className="bg-blue-600 h-full"
-                            initial={{ width: 0 }}
                             animate={{ width: `${progress}%` }}
                           />
                         </div>
@@ -364,16 +452,14 @@ const TransferModal: React.FC<TransferModalProps> = ({
                           {SECURITY_LAYERS[activeLayerIndex].label}
                         </p>
                       </div>
-
                       <input
                         type="password"
-                        maxLength={4}
+                        maxLength={6}
                         value={pin}
                         onChange={(e) => setPin(e.target.value)}
                         className="w-full text-center text-4xl tracking-[0.5em] font-black p-5 bg-slate-900 border-2 border-slate-800 rounded-3xl outline-none focus:border-blue-500 mb-8"
                         autoFocus
                       />
-
                       <button
                         onClick={handlePinSubmit}
                         className="w-full py-5 bg-blue-600 text-white font-black rounded-2xl uppercase text-xs tracking-widest hover:bg-blue-500 transition-colors"
@@ -385,7 +471,6 @@ const TransferModal: React.FC<TransferModalProps> = ({
                 </div>
               )}
 
-              {/* STEP 4: SUCCESS */}
               {step === 4 && (
                 <div className="h-full flex flex-col items-center justify-center text-center space-y-8">
                   <motion.div
