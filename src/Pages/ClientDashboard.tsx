@@ -210,7 +210,10 @@ const ClientDashboard = () => {
   };
 
   const handleSignOut = async () => {
+    const signingout = window.confirm("Are you sure you want to sign out?");
+    if (!signingout) return;
     await supabase.auth.signOut();
+
     navigate("/Login");
   };
 

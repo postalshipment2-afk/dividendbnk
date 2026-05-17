@@ -25,7 +25,7 @@ function App() {
     <Router>
       {/* Scroll hook must be inside Router */}
       <ScrollToTopWrapper>
-        <Toaster />
+        <Toaster position="top-right" richColors />
         <Navbar />
         <main className="min-h-screen pt-20 md:pt-28">
           <Routes>
