@@ -15,7 +15,6 @@ import {
   Plus,
 } from "lucide-react";
 
-// Types
 interface Profile {
   id: string;
   full_name: string;
@@ -24,12 +23,12 @@ interface Profile {
   account_number: string;
   balance: number;
   status: "active" | "locked" | "pending" | "suspended";
-  history_date: string;
-  history_from: string;
-  history_to: string;
-  history_amount: number;
-  transfer_origin_country: string;
-  history_status: "credit" | "debit";
+  history_date?: string;
+  history_from?: string;
+  history_to?: string;
+  history_amount?: number;
+  transfer_origin_country?: string;
+  history_status?: "credit" | "debit";
 }
 
 const DashboardComponent: React.FC = () => {
@@ -93,25 +92,38 @@ const DashboardComponent: React.FC = () => {
 
     try {
       const amountChange = Number(historyPanelProfile.history_amount || 0);
-      const updatedBalance =
-        historyPanelProfile.history_status === "credit"
-          ? Number(historyPanelProfile.balance) + amountChange
-          : Number(historyPanelProfile.balance) - amountChange;
+      const isCredit = historyPanelProfile.history_status === "credit";
 
-      const { error } = await supabase
+      const updatedBalance = isCredit
+        ? Number(historyPanelProfile.balance) + amountChange
+        : Number(historyPanelProfile.balance) - amountChange;
+
+      // 1. Update rolling user profile global balance balance row
+      const { error: profileError } = await supabase
         .from("profiles")
-        .update({
-          history_date: historyPanelProfile.history_date,
-          history_from: historyPanelProfile.history_from,
-          history_to: historyPanelProfile.history_to,
-          history_amount: amountChange,
-          history_status: historyPanelProfile.history_status,
-          transfer_origin_country: historyPanelProfile.transfer_origin_country,
-          balance: updatedBalance,
-        })
+        .update({ balance: updatedBalance })
         .eq("id", historyPanelProfile.id);
 
-      if (error) throw error;
+      if (profileError) throw profileError;
+
+      // 2. Insert new immutable single ledger row event record
+      const { error: txError } = await supabase.from("transactions").insert({
+        user_id: historyPanelProfile.id,
+        name: isCredit
+          ? `Wire Deposit from ${historyPanelProfile.history_from || "External Source"}`
+          : `Wire Withdrawal to ${historyPanelProfile.history_to || "External Source"}`,
+        amount: amountChange,
+        type: isCredit ? "deposit" : "withdrawal",
+        date: historyPanelProfile.history_date
+          ? new Date(historyPanelProfile.history_date).toISOString()
+          : new Date().toISOString(),
+        source_bank: historyPanelProfile.history_from || null,
+        destination_bank: historyPanelProfile.history_to || null,
+        origin_country: historyPanelProfile.transfer_origin_country || null,
+      });
+
+      if (txError) throw txError;
+
       setHistoryPanelProfile(null);
       await fetchProfiles();
     } catch (err: any) {
@@ -163,7 +175,6 @@ const DashboardComponent: React.FC = () => {
       </nav>
 
       <main className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
-        {/* Stats Summary (Optional Visual Flair) */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
           <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
             <p className="text-sm text-slate-500 font-medium">Total Clients</p>
@@ -186,9 +197,8 @@ const DashboardComponent: React.FC = () => {
           </div>
         </div>
 
-        {/* Table/List Container */}
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-          {/* Desktop Table View */}
+          {/* Desktop Table */}
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left">
               <thead>
@@ -267,7 +277,12 @@ const DashboardComponent: React.FC = () => {
                       <td className="px-6 py-4">
                         <div className="flex justify-end gap-1">
                           <ActionButton
-                            onClick={() => setHistoryPanelProfile({ ...p })}
+                            onClick={() =>
+                              setHistoryPanelProfile({
+                                ...p,
+                                history_status: "credit",
+                              })
+                            }
                             icon={<History size={16} />}
                             label="History"
                             color="hover:text-blue-600 hover:bg-blue-50"
@@ -308,7 +323,7 @@ const DashboardComponent: React.FC = () => {
             </table>
           </div>
 
-          {/* Mobile Card View */}
+          {/* Mobile Cards */}
           <div className="md:hidden divide-y divide-slate-100">
             {filteredProfiles.map((p) => (
               <div key={p.id} className="p-4 space-y-4">
@@ -333,11 +348,7 @@ const DashboardComponent: React.FC = () => {
                     </div>
                   </div>
                   <span
-                    className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase border ${
-                      p.status === "active"
-                        ? "bg-emerald-50 text-emerald-600 border-emerald-100"
-                        : "bg-rose-50 text-rose-600 border-rose-100"
-                    }`}
+                    className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase border ${p.status === "active" ? "bg-emerald-50 text-emerald-600 border-emerald-100" : "bg-rose-50 text-rose-600 border-rose-100"}`}
                   >
                     {p.status}
                   </span>
@@ -352,7 +363,9 @@ const DashboardComponent: React.FC = () => {
                 </div>
                 <div className="flex gap-2">
                   <button
-                    onClick={() => setHistoryPanelProfile({ ...p })}
+                    onClick={() =>
+                      setHistoryPanelProfile({ ...p, history_status: "credit" })
+                    }
                     className="flex-1 flex justify-center items-center gap-2 py-2 bg-blue-50 text-blue-600 rounded-lg text-xs font-bold"
                   >
                     <History size={14} /> History
@@ -388,7 +401,7 @@ const DashboardComponent: React.FC = () => {
             className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
             onClick={() => !isSubmitting && setHistoryPanelProfile(null)}
           />
-          <div className="relative w-full max-w-lg bg-white shadow-2xl h-full flex flex-col animate-in slide-in-from-right duration-300">
+          <div className="relative w-full max-w-lg bg-white shadow-2xl h-full flex flex-col">
             <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-blue-100 text-blue-600 rounded-lg">
@@ -415,7 +428,6 @@ const DashboardComponent: React.FC = () => {
               onSubmit={handleHistorySubmit}
               className="p-6 space-y-6 flex-1 overflow-y-auto"
             >
-              {/* Balance Card */}
               <div className="bg-linear-to-br from-slate-800 to-slate-900 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
                 <div className="relative z-10">
                   <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1">
@@ -434,6 +446,7 @@ const DashboardComponent: React.FC = () => {
                 <InputGroup label="Transaction Amount">
                   <input
                     type="number"
+                    step="any"
                     required
                     className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 font-bold outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
                     value={historyPanelProfile.history_amount || ""}
@@ -447,8 +460,8 @@ const DashboardComponent: React.FC = () => {
                 </InputGroup>
                 <InputGroup label="Transaction Type">
                   <select
-                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 font-bold outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 appearance-none transition-all"
-                    value={historyPanelProfile.history_status}
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 font-bold outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                    value={historyPanelProfile.history_status || "credit"}
                     onChange={(e) =>
                       setHistoryPanelProfile({
                         ...historyPanelProfile,
@@ -549,7 +562,6 @@ const DashboardComponent: React.FC = () => {
   );
 };
 
-// Helper Components to clean up JSX
 const ActionButton = ({ onClick, icon, label, color }: any) => (
   <button
     onClick={onClick}

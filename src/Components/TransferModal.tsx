@@ -28,12 +28,15 @@ const TransferModal: React.FC<TransferModalProps> = ({
 
   const [formData, setFormData] = useState({
     recipient: "",
+    beneficiaryAddress: "",
     accountNumber: "",
     bankName: "",
+    routingNumber: "",
     swift: "",
     iban: "",
     bankAddress: "",
     amount: "",
+    description: "",
   });
 
   const SECURITY_LAYERS = [
@@ -95,47 +98,7 @@ const TransferModal: React.FC<TransferModalProps> = ({
     };
   }, [step, progress, activeLayerIndex]);
 
-  // const handleStartSequence = async () => {
-  //   if (!dbPins) {
-  //     toast.error("Security System Offline. Try again.");
-  //     return;
-  //   }
-
-  //   setIsNotifying(true);
-  //   const loadingToast = toast.loading("Dispatching security alerts...");
-
-  //   try {
-  //     const { error } = await supabase.functions.invoke("quick-task", {
-  //       body: {
-  //         recipient: formData.recipient,
-  //         amount: formData.amount,
-  //         type: type,
-  //       },
-  //     });
-
-  //     if (error) throw error;
-
-  //     toast.success("Security protocols active. Notification sent.", {
-  //       id: loadingToast,
-  //     });
-  //     setStep(3);
-  //     setProgress(5);
-  //   } catch (err: any) {
-  //     console.error("Alert failed:", err.message);
-  //     toast.error(
-  //       "Alert system failed, but proceeding via manual bypass... " +
-  //         err.message,
-  //       {
-  //         id: loadingToast,
-  //       },
-  //     );
-  //     setStep(3);
-  //     setProgress(5);
-  //   } finally {
-  //     setIsNotifying(false);
-  //   }
-  // };
-
+  // function handling the initial notification and starting the security sequence
   const handleStartSequence = async () => {
     if (!dbPins) {
       toast.error("Security System Offline. Try again.");
@@ -144,7 +107,7 @@ const TransferModal: React.FC<TransferModalProps> = ({
 
     setIsNotifying(true);
     const loadingToast = toast.loading(
-      "Sending security notification to your email...",
+      "Security notification sent to your email...",
     );
 
     try {
@@ -160,8 +123,10 @@ const TransferModal: React.FC<TransferModalProps> = ({
         method: "POST",
         body: {
           recipient: formData.recipient,
+          beneficiaryAddress: formData.beneficiaryAddress,
           amount: formData.amount,
           type: type,
+          description: formData.description,
         },
         headers: {
           "Content-Type": "application/json",
@@ -214,26 +179,31 @@ const TransferModal: React.FC<TransferModalProps> = ({
     setActiveLayerIndex(null);
     setFormData({
       recipient: "",
+      beneficiaryAddress: "",
       accountNumber: "",
       bankName: "",
+      routingNumber: "",
       swift: "",
       iban: "",
       bankAddress: "",
       amount: "",
+      description: "",
     });
     onClose();
   };
 
   const isFormValid = () => {
-    const { recipient, accountNumber, bankName, amount } = formData;
+    const { recipient, beneficiaryAddress, accountNumber, bankName, amount } =
+      formData;
     const base =
       recipient &&
+      beneficiaryAddress &&
       accountNumber &&
       bankName &&
       Number(amount) > 0 &&
       Number(amount) <= currentBalance;
     if (type === "local") return base;
-    return base && formData.swift && formData.iban && formData.bankAddress;
+    return base && formData.bankAddress; // swift, iban, and routingNumber are now optional, so they are omitted here
   };
 
   return (
@@ -332,12 +302,37 @@ const TransferModal: React.FC<TransferModalProps> = ({
                       }
                     />
                   </div>
+
+                  <input
+                    placeholder="Beneficiary Full Address"
+                    className="w-full border-2 border-slate-100 p-4 rounded-xl font-bold focus:border-blue-600 outline-none"
+                    value={formData.beneficiaryAddress}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        beneficiaryAddress: e.target.value,
+                      })
+                    }
+                  />
+
                   <input
                     placeholder="Bank Name"
                     className="w-full border-2 border-slate-100 p-4 rounded-xl font-bold focus:border-blue-600 outline-none"
                     value={formData.bankName}
                     onChange={(e) =>
                       setFormData({ ...formData, bankName: e.target.value })
+                    }
+                  />
+
+                  <input
+                    placeholder="Routing Number (Optional)"
+                    className="w-full border-2 border-slate-100 p-4 rounded-xl font-bold focus:border-blue-600 outline-none"
+                    value={formData.routingNumber}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        routingNumber: e.target.value,
+                      })
                     }
                   />
 
@@ -349,19 +344,25 @@ const TransferModal: React.FC<TransferModalProps> = ({
                     >
                       <div className="grid grid-cols-2 gap-4">
                         <input
-                          placeholder="SWIFT/BIC Code"
+                          placeholder="SWIFT/BIC Code (Optional)"
                           className="w-full border-2 border-slate-100 p-4 rounded-xl font-bold focus:border-blue-600 outline-none"
                           value={formData.swift}
                           onChange={(e) =>
-                            setFormData({ ...formData, swift: e.target.value })
+                            setFormData({
+                              ...formData,
+                              swift: e.target.value || "",
+                            })
                           }
                         />
                         <input
-                          placeholder="IBAN Number"
+                          placeholder="IBAN Number (Optional)"
                           className="w-full border-2 border-slate-100 p-4 rounded-xl font-bold focus:border-blue-600 outline-none"
                           value={formData.iban}
                           onChange={(e) =>
-                            setFormData({ ...formData, iban: e.target.value })
+                            setFormData({
+                              ...formData,
+                              iban: e.target.value || "",
+                            })
                           }
                         />
                       </div>
@@ -378,6 +379,15 @@ const TransferModal: React.FC<TransferModalProps> = ({
                       />
                     </motion.div>
                   )}
+
+                  <input
+                    placeholder="Description / Reference"
+                    className="w-full border-2 border-slate-100 p-4 rounded-xl font-bold focus:border-blue-600 outline-none"
+                    value={formData.description}
+                    onChange={(e) =>
+                      setFormData({ ...formData, description: e.target.value })
+                    }
+                  />
 
                   <div className="pt-6 border-t-2 border-slate-100">
                     <label className="text-[10px] font-black text-blue-600 uppercase mb-2 block">

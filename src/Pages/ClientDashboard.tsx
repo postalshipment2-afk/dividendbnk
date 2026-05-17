@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-// Centralized Supabase Client
 import { supabase } from "../hooks/supabase";
 import { toast } from "sonner";
 import {
@@ -9,12 +8,14 @@ import {
   Send,
   ShieldCheck,
   LogOut,
-  ArrowDownLeft,
+  ArrowUpLeft,
   ArrowUpRight,
   CreditCard,
   Plus,
   Fingerprint,
   PieChart,
+  ArrowUpDown,
+  ArrowDown,
 } from "lucide-react";
 import TransferModal from "../Components/TransferModal";
 
@@ -36,12 +37,25 @@ const ClientDashboard = () => {
   >("overview");
   const navigate = useNavigate();
 
+  // Pure state wrapper function to consistently clean structure model items
+  const formatTransaction = (tx: any) => ({
+    id: tx.id,
+    name: tx.name,
+    date: new Date(tx.date).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    }),
+    amount: `${tx.type === "deposit" ? "+" : "-"}${Number(tx.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}`,
+    type: tx.type,
+  });
+
   useEffect(() => {
     const setupDashboard = async () => {
       try {
         setIsLoading(true);
 
-        // 1. Verify Authentication
+        // 1. Verify User Authentication
         const {
           data: { user },
           error: authError,
@@ -64,30 +78,38 @@ const ClientDashboard = () => {
           return;
         }
 
-        // DEBUG: Check your console to see the exact column names
-        console.log("DEBUG PROFILE DATA:", profileData);
-
         setProfile(profileData);
         setBalance(Number(profileData.balance) || 0.0);
 
-        // 3. Set Initial Ledger Item
-        setTransactions([
-          {
-            id: "init",
-            name: "Verified Ledger Balance",
-            date: new Date().toLocaleDateString("en-US", {
-              month: "short",
-              day: "numeric",
-              year: "numeric",
-            }),
-            amount: `+${Number(profileData.balance).toLocaleString(undefined, { minimumFractionDigits: 2 })}`,
-            type: "deposit",
-          },
-        ]);
+        // 3. Fetch cumulative transaction rows from distinct related child rows
+        const { data: txData, error: txError } = await supabase
+          .from("transactions")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("date", { ascending: false });
 
-        // 4. Real-time Listener (Auto-updates and Security Kick)
-        const channel = supabase
-          .channel(`db-sync-${user.id}`)
+        if (!txError && txData && txData.length > 0) {
+          setTransactions(txData.map(formatTransaction));
+        } else {
+          // Fallback array default item matching original balance state metrics design matrix
+          setTransactions([
+            {
+              id: "init",
+              name: "Verified Ledger Balance",
+              date: new Date().toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              }),
+              amount: `+${Number(profileData.balance).toLocaleString(undefined, { minimumFractionDigits: 2 })}`,
+              type: "deposit",
+            },
+          ]);
+        }
+
+        // 4. Real-time Subscription Channel for Profile changes
+        const profileChannel = supabase
+          .channel(`db-profile-sync-${user.id}`)
           .on(
             "postgres_changes",
             {
@@ -97,7 +119,6 @@ const ClientDashboard = () => {
               filter: `id=eq.${user.id}`,
             },
             (payload) => {
-              // Kick if account is no longer active
               if (payload.new.status !== "active") {
                 supabase.auth.signOut().then(() => navigate("/Login"));
                 return;
@@ -108,8 +129,31 @@ const ClientDashboard = () => {
           )
           .subscribe();
 
+        // 5. Real-time Subscription Channel for NEW dynamic Transaction entries dropping in
+        const txChannel = supabase
+          .channel(`db-tx-sync-${user.id}`)
+          .on(
+            "postgres_changes",
+            {
+              event: "INSERT",
+              schema: "public",
+              table: "transactions",
+              filter: `user_id=eq.${user.id}`,
+            },
+            (payload) => {
+              const newTxFormatted = formatTransaction(payload.new);
+              setTransactions((prev) => {
+                // Ensure we remove standard standalone placeholders once real item exists
+                const baseList = prev.filter((t) => t.id !== "init");
+                return [newTxFormatted, ...baseList];
+              });
+            },
+          )
+          .subscribe();
+
         return () => {
-          supabase.removeChannel(channel);
+          supabase.removeChannel(profileChannel);
+          supabase.removeChannel(txChannel);
         };
       } catch (err) {
         console.error("Dashboard Setup Error:", err);
@@ -121,7 +165,6 @@ const ClientDashboard = () => {
     setupDashboard();
   }, [navigate]);
 
-  // Loading Screen
   if (isLoading) {
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center">
@@ -139,23 +182,29 @@ const ClientDashboard = () => {
     if (!profile?.id) return;
 
     const newBalance = balance - amount;
-    const { error } = await supabase
+
+    // 1. Update Profile Balance Total Row
+    const { error: profileError } = await supabase
       .from("profiles")
       .update({ balance: newBalance })
       .eq("id", profile.id);
 
-    if (!error) {
+    if (profileError) {
+      toast.error("Failed to process transaction profile updates.");
+      return;
+    }
+
+    // 2. Insert into Ledger database mapping list rows
+    const { error: txError } = await supabase.from("transactions").insert({
+      user_id: profile.id,
+      name: `Transfer to ${recipient}`,
+      amount: amount,
+      type: "withdrawal",
+      date: new Date().toISOString(),
+    });
+
+    if (!txError) {
       setBalance(newBalance);
-      setTransactions([
-        {
-          id: Date.now(),
-          name: `Transfer to ${recipient}`,
-          date: "Just Now",
-          amount: `-${amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}`,
-          type: "withdrawal",
-        },
-        ...transactions,
-      ]);
       toast.success(
         `Transfer of $${amount.toLocaleString()} to ${recipient} completed successfully!`,
       );
@@ -206,7 +255,6 @@ const ClientDashboard = () => {
         <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200 px-6 py-4 lg:px-10 flex justify-between items-center">
           <div className="hidden lg:block">
             <h1 className="text-xl font-black text-slate-950 uppercase italic tracking-tight">
-              {/* Fallback chain for different database naming conventions */}
               Welcome back,{" "}
               {profile?.full_name ||
                 profile?.name ||
@@ -226,7 +274,6 @@ const ClientDashboard = () => {
               <LogOut size={16} /> Logout
             </button>
             <div className="w-10 h-10 rounded-full bg-blue-600 border-2 border-white shadow-lg flex items-center justify-center text-white font-bold uppercase text-xs">
-              {/* Dynamic Initials Fallback */}
               {(profile?.full_name || profile?.name || "AD")
                 .split(" ")
                 .map((n: any) => n[0])
@@ -268,23 +315,18 @@ const ClientDashboard = () => {
 
                 {/* ATM CARD DISPLAY */}
                 <div className="lg:col-span-5">
-                  {/* Platinum Card: Sleek, dark, and metallic */}
                   <ATMCard
                     type="Platinum"
                     number={`**** ${profile?.account_number?.slice(-4) || "0000"}`}
                     expiry="12/29"
                     color="bg-gradient-to-br from-slate-800 via-slate-900 to-black border border-slate-700 shadow-2xl"
                   />
-
-                  {/* Gold Card: Warm, shimmering, and high-contrast */}
                   <ATMCard
                     type="Gold"
                     number={`**** ${profile?.account_number?.slice(-4) || "0000"}`}
                     expiry="12/29"
                     color="bg-gradient-to-br from-yellow-300 via-yellow-500 to-amber-600 text-black mt-6 shadow-xl"
                   />
-
-                  {/* Standard Card: Modern, clean, and professional */}
                   <ATMCard
                     type="Standard"
                     number={`**** ${profile?.account_number?.slice(-4) || "0000"}`}
@@ -295,21 +337,15 @@ const ClientDashboard = () => {
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* TRANSACTION LIST */}
+                {/* TRANSACTION LEDGER ACTIVITY LIST */}
                 <div className="lg:col-span-2 bg-white rounded-[2.5rem] p-6 lg:p-8 shadow-sm border border-slate-100">
                   <h4 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-8">
                     Ledger Activity
                   </h4>
                   <div className="space-y-2">
-                    {transactions.length > 0 ? (
-                      transactions.map((tx) => (
-                        <TransactionRow key={tx.id} tx={tx} />
-                      ))
-                    ) : (
-                      <p className="text-xs text-slate-400 font-bold uppercase py-10 text-center">
-                        No recent activity
-                      </p>
-                    )}
+                    {transactions.map((tx) => (
+                      <TransactionRow key={tx.id} tx={tx} />
+                    ))}
                   </div>
                 </div>
 
@@ -392,16 +428,11 @@ const ClientDashboard = () => {
   );
 };
 
-// --- SUB-COMPONENTS ---
-
+// --- HELPER SUB-COMPONENTS ---
 const NavItem = ({ icon, label, active = false, onClick }: any) => (
   <button
     onClick={onClick}
-    className={`w-full flex items-center gap-4 px-4 py-4 rounded-2xl transition-all font-bold text-sm ${
-      active
-        ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20"
-        : "text-slate-400 hover:text-white hover:bg-slate-900"
-    }`}
+    className={`w-full flex items-center gap-4 px-4 py-4 rounded-2xl transition-all font-bold text-sm ${active ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20" : "text-slate-400 hover:text-white hover:bg-slate-900"}`}
   >
     {icon} {label}
   </button>
@@ -437,14 +468,10 @@ const TransactionRow = ({ tx }: any) => (
   <div className="flex items-center justify-between p-4 hover:bg-slate-50 rounded-2xl transition-all border border-transparent hover:border-slate-100">
     <div className="flex items-center gap-4">
       <div
-        className={`w-10 h-10 rounded-full flex items-center justify-center ${
-          tx.type === "deposit"
-            ? "bg-green-100 text-green-600"
-            : "bg-blue-50 text-blue-600"
-        }`}
+        className={`w-10 h-10 rounded-full flex items-center justify-center ${tx.type === "deposit" ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"}`}
       >
         {tx.type === "deposit" ? (
-          <ArrowDownLeft size={18} />
+          <ArrowDown size={18} />
         ) : (
           <ArrowUpRight size={18} />
         )}
@@ -457,9 +484,7 @@ const TransactionRow = ({ tx }: any) => (
       </div>
     </div>
     <span
-      className={`text-sm font-black tracking-tight ${
-        tx.type === "deposit" ? "text-green-600" : "text-slate-900"
-      }`}
+      className={`text-sm font-black tracking-tight ${tx.type === "deposit" ? "text-green-600" : "text-red-600"}`}
     >
       {tx.amount}
     </span>
