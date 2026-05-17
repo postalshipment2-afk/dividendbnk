@@ -8,13 +8,11 @@ import {
   Send,
   ShieldCheck,
   LogOut,
-  ArrowUpLeft,
   ArrowUpRight,
   CreditCard,
   Plus,
   Fingerprint,
   PieChart,
-  ArrowUpDown,
   ArrowDown,
 } from "lucide-react";
 import TransferModal from "../Components/TransferModal";
