@@ -103,7 +103,7 @@ export default function Home() {
                 title="Over 30 Years of Institutional Excellence"
               />
               <p className="text-xl text-slate-600 leading-relaxed mb-10">
-                Since 1990, Nexus finance has served as a global cornerstone of
+                Since 1990, Dividend-Bank has served as a global cornerstone of
                 financial stability. We combine traditional wealth protection
                 with high-velocity digital infrastructure to empower the modern
                 investor.

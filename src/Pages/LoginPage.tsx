@@ -79,7 +79,7 @@ const LoginPage = () => {
       // 4) SUCCESS: trigger Edge Function
       try {
         const functionUrl =
-          "https://fbywieiduklfiortmogm.supabase.co/functions/v1/send-login-email";
+          "https://dqgudmgqljobsdxtrasx.supabase.co/functions/v1/send-login-email";
 
         const userEmail = user.email;
         if (!userEmail) {
@@ -125,13 +125,13 @@ const LoginPage = () => {
         <img
           src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070"
           className="absolute inset-0 w-full h-full object-cover opacity-40"
-          alt="Doksanlar HQ"
+          alt="Dividend-Bank HQ"
         />
         <div className="relative z-10 p-12 xl:p-20 flex flex-col justify-between h-full w-full">
           <Link to="/" className="flex items-center gap-3 group pt-18">
             <Landmark className="text-blue-500 w-10 h-10 group-hover:rotate-12 transition-transform" />
             <span className="text-2xl xl:text-3xl font-black text-white tracking-tighter uppercase ">
-              Nexus-Finance{" "}
+              Dividend-Bank{" "}
             </span>
           </Link>
 
@@ -161,7 +161,7 @@ const LoginPage = () => {
           <div className="flex lg:hidden items-center justify-center gap-2 mb-8">
             <Landmark className="text-blue-600 w-8 h-8" />
             <span className="text-xl font-black text-slate-900 tracking-tighter uppercase">
-              Nexus-Finance
+              Dividend-Bank
             </span>
           </div>
 
@@ -270,7 +270,7 @@ const LoginPage = () => {
 
               <div className="h-px w-full bg-slate-100 relative">
                 <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-3 text-[9px] font-black text-slate-300 uppercase tracking-widest whitespace-nowrap">
-                  New to Doksanlar?
+                  New to Dividend-Bank?
                 </span>
               </div>
 

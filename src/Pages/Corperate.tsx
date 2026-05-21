@@ -128,7 +128,7 @@ const CorporatePage = () => {
                 Dedicated <br /> Relationship <br /> Management.
               </h2>
               <p className="text-slate-400 text-lg mb-8">
-                Every Nexus-Finance Corporate client is paired with a senior
+                Every Dividend-Bank Corporate client is paired with a senior
                 advisor specializing in their specific industry vertical.
               </p>
               <div className="flex items-center gap-4 group cursor-pointer">
@@ -207,7 +207,7 @@ const CorporatePage = () => {
             </div>
           </div>
           <p className="text-[10px] font-bold text-slate-400 max-w-md text-right uppercase tracking-widest leading-loose">
-            Nexus-Finance PLC is regulated by the Prudential Regulation
+            Dividend-Bank PLC is regulated by the Prudential Regulation
             Authority and the Financial Conduct Authority.
           </p>
         </div>

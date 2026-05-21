@@ -30,8 +30,8 @@ const Footer = () => (
         <div className="max-w-xs">
           {/* CRYSTAL GRADIENT LOGO: Metallic effect */}
           <h3 className="text-3xl font-black mb-6 tracking-tighter italic bg-linear-to-tr from-white via-blue-400 to-white bg-clip-text text-transparent drop-shadow-sm">
-            Nexus-{" "}
-            <span className="text-blue-600 not-italic font-light">Finance</span>
+            Dividend-{" "}
+            <span className="text-blue-600 not-italic font-light">Bank</span>
             {/* <span className="text-blue-600 not-italic font-light">Bank</span> */}
           </h3>
 
@@ -167,9 +167,8 @@ const Footer = () => (
             <div className="flex items-start gap-3">
               <MapPin className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
               <span>
-                123 Financial District
-                <br />
-                New York, NY 10001
+                Ziya Gökalp, Süleyman Demirel Blv No:7, 34490 Başakşehir <br />
+                İstanbul, Türkiye{" "}
               </span>
             </div>
 
@@ -177,10 +176,10 @@ const Footer = () => (
             <div className="flex items-center gap-3">
               <Phone className="w-5 h-5 text-blue-500 shrink-0" />
               <a
-                href="tel:5551234567"
+                href="tel:+905349534720"
                 className="hover:text-white transition-colors"
               >
-                +1 (413) 217-0381
+                +90 534 953 47 20{" "}
               </a>
             </div>
 
@@ -191,7 +190,7 @@ const Footer = () => (
                 href="mailto:support@nexussaving.com"
                 className="hover:text-white transition-colors"
               >
-                support@nexussaving.com
+                info@dividendbks.com
               </a>
             </div>
           </address>
@@ -201,7 +200,7 @@ const Footer = () => (
       {/* Copyright */}
       <div className="border-t border-slate-600 mt-12 pt-8 text-center text-slate-400">
         <p>
-          &copy; {new Date().getFullYear()} Nexus-Finance. All rights reserved
+          &copy; {new Date().getFullYear()} Dividend-Bank. All rights reserved
         </p>
       </div>
     </div>

@@ -382,10 +382,10 @@ const ContactPage = () => {
                     24/7 Priority Line
                   </h4>
                   <a
-                    href="tel:+14132170381"
+                    href="tel:+905349534720"
                     className="text-slate-500 text-sm mt-1 hover:text-blue-600 transition-colors block"
                   >
-                    +1 (413) 217-0381
+                    +90 534 953 47 20
                   </a>
                 </div>
               </div>
@@ -399,10 +399,10 @@ const ContactPage = () => {
                     Secure Email
                   </h4>
                   <a
-                    href="mailto:support@nexussaving.com"
+                    href="mailto:info@dividendbks.com"
                     className="text-slate-500 text-sm mt-1 hover:text-blue-600 transition-colors block"
                   >
-                    support@nexussaving.com
+                    info@dividendbks.com
                   </a>
                 </div>
               </div>
@@ -416,7 +416,7 @@ const ContactPage = () => {
                     Global HQ
                   </h4>
                   <p className="text-slate-500 text-sm mt-1">
-                    Financial District, London
+                    İstanbul, Türkiye
                   </p>
                 </div>
               </div>

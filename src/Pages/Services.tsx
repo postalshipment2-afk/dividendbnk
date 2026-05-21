@@ -183,9 +183,9 @@ export default function Services() {
             </h1>
 
             <p className="text-lg md:text-xl text-slate-400 mb-12 leading-relaxed max-w-2xl font-medium">
-              Nexus-Finance & Savings provides the infrastructure for your
-              global lifestyle. Our card suites are engineered for resilience,
-              speed, and absolute security.
+              Dividend Bank provides the infrastructure for your global
+              lifestyle. Our card suites are engineered for resilience, speed,
+              and absolute security.
             </p>
 
             <div className="flex flex-wrap gap-5">
@@ -360,7 +360,7 @@ export default function Services() {
                 </span>
               </h2>
               <p className="text-blue-100/70 max-w-xl mx-auto mb-14 text-lg font-medium leading-relaxed">
-                Join the global elite who rely on Nexus-Finance for cross-border
+                Join the global elite who rely on Dividend-Bank for cross-border
                 capital management and asset protection.
               </p>
               <Link
