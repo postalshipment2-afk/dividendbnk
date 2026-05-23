@@ -204,7 +204,7 @@ const LoginPage = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full bg-slate-50 border border-slate-200 p-3.5 sm:p-4 pl-12 rounded-xl sm:rounded-2xl outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all font-medium text-sm sm:text-base"
-                    placeholder="client@doksanlar.com"
+                    placeholder="client@dividend.com"
                     required
                   />
                 </div>

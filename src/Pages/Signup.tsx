@@ -118,7 +118,7 @@ const SignupPage = () => {
           <Link to="/" className="flex items-center gap-3 pt-15">
             <Landmark className="text-blue-500 w-12 h-12" />
             <span className="text-3xl font-black text-white tracking-tighter uppercase">
-              Nexus-Finance
+              Dividend-Bank
             </span>
           </Link>
 
@@ -458,7 +458,7 @@ const SignupPage = () => {
           )}
         </motion.div>
         <p className="mt-12 text-[10px] font-bold text-slate-300 uppercase tracking-[0.5em]">
-          Nexus-Finance Institutional Portal v4.2
+          Dividend-Bank Institutional Portal v4.2
         </p>
       </section>
     </main>
