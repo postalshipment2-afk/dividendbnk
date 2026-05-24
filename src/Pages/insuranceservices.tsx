@@ -120,7 +120,7 @@ export default function InsurancePage() {
                   </span>
                 </div>
                 <p className="text-[10px] text-slate-300 font-medium leading-relaxed">
-                  All Doksanlar policies are backed by Tier-1 reinsurance
+                  All Dividend-Bank policies are backed by Tier-1 reinsurance
                   capital and Basel III compliance.
                 </p>
               </div>
@@ -184,7 +184,7 @@ export default function InsurancePage() {
           <div className="lg:col-span-1">
             <ShieldAlert size={56} className="text-blue-500 mb-8" />
             <h2 className="text-5xl font-black text-white tracking-tighter mb-6 italic">
-              The Nexus-Finance <br /> Guarantee.
+              The Dividend-Bank <br /> Guarantee.
             </h2>
             <p className="text-slate-400 font-medium text-lg leading-relaxed">
               When crisis strikes, our Rapid Response claims desk activates
