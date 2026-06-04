@@ -18,7 +18,7 @@ import {
   MapPin,
   Phone,
   CheckCircle2,
-  Wallet,
+  // Wallet,
   ArrowLeft,
 } from "lucide-react";
 
@@ -350,7 +350,7 @@ const SignupPage = () => {
                     </div>
                   </div>
 
-                  <div className="md:col-span-2 space-y-1">
+                  {/* <div className="md:col-span-2 space-y-1">
                     <label className="text-[10px] font-black text-blue-600 uppercase tracking-[0.2em] ml-1">
                       Opening Deposit (USD)
                     </label>
@@ -377,7 +377,7 @@ const SignupPage = () => {
                         placeholder="0.00"
                       />
                     </div>
-                  </div>
+                  </div> */}
 
                   <div className="space-y-1">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
