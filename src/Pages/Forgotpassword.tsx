@@ -99,7 +99,7 @@ export default function ForgotPassword() {
                     Forgot Password?
                   </h1>
                   <p className="text-slate-500 font-medium">
-                    Please enter the email associated with your Doksanlar Bank
+                    Please enter the email associated with your dividend-Bank
                     account.
                   </p>
                 </div>
